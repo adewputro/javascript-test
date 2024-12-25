@@ -29,7 +29,7 @@ class AnalysisPlotter {
                     legend: {display: false},
                     title: {
                         display: true,
-                        text: "shear_force",
+                        text: "Shear Force (kN)",
                         fontSize: 16
                     }
                 }
@@ -49,7 +49,7 @@ class AnalysisPlotter {
                     legend: {display: false},
                     title: {
                         display: true,
-                        text: "bending_moment",
+                        text: "Bending Momen (kN-m)",
                         fontSize: 16
                     }
                 }
@@ -69,7 +69,7 @@ class AnalysisPlotter {
                     legend: {display: false},
                     title: {
                         display: true,
-                        text: "deflection",
+                        text: "Deflection (mm)",
                         fontSize: 16
                     }
                 }
