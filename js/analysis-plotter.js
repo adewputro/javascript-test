@@ -14,8 +14,8 @@ class AnalysisPlotter {
      * @param {Object{beam : Beam, load : float, equation: Function}}  The equation data
      */
     plot(data) {
-       console.log(data)
         if (data.equation.analys == "shearforce") {
+
             const shear_force_plot = new Chart("shear_force_plot", {
                 type: "scatter",
                 data: {
@@ -34,9 +34,8 @@ class AnalysisPlotter {
                     }
                 }
             });
-            // console.log(data.equation.data)
+            shear_force_plot.update()
         }else if (data.equation.analys == 'bendingmoment') {
-            // console.log(data.equation.data)
             const bending_moment_plot = new Chart("bending_moment_plot", {
                 type: "scatter",
                 data: {
@@ -57,7 +56,6 @@ class AnalysisPlotter {
             });
             
         }else if (data.equation.analys == 'deflection') {
-            // console.log(data.equation.data)
             const deflection_plot = new Chart("deflection_plot", {
                 type: "scatter",
                 data: {

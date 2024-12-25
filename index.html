@@ -62,9 +62,6 @@
         src="chart.js">
     </script>
     <script>
-                    /**
-         * Get float value of specified field
-         */
         function floatVal(id) {
             return parseFloat(
                 document.getElementById(id).value
@@ -76,8 +73,9 @@
         }
 
         document.getElementById('calculate').addEventListener('click', function(e) {
+            
             var beam = new Beam();
-
+            
             beam.primarySpan    = floatVal('primarySpan');
             beam.secondarySpan  = floatVal('secondarySpan');
             beam.j2             = floatVal('j2');
@@ -99,6 +97,7 @@
             plotter.deflection.plot(deflectionData);
             plotter.shearForce.plot(shearForceData);
             plotter.bendingMoment.plot(bendingMomentData);
+            
         });
     </script>
 </body>
