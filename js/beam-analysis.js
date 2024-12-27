@@ -109,39 +109,45 @@ BeamAnalysis.analyzer.simplySupported = class {
         this.load = load;
     }
     getDeflectionEquation(beam, load) {
-        const array = []
+        const yarray = []
+        const xarray = []
         var j = beam.j2
         var w =load;
         var l = beam.primarySpan;
         var Ei = beam.material.properties.EI
-        for (let x = 0; x <= beam.primarySpan; x+=beam.primarySpan/10) {
+        for (let x = 0; x <= beam.primarySpan; x+=beam.primarySpan/100) {
             var v = -((w*x)/(24*Ei/Math.pow(1000, 3)))*(Math.pow(l, 3)-2*l*Math.pow(x,2)+Math.pow(x, 3))*j*1000
-            array.unshift({"x" : x, "y" : v})
+            yarray.unshift(v.toFixed(2))
+            xarray.unshift(x.toFixed(2))
         }
         
-        return {"analys" : "deflection", data : array}
+        return {"analys" : "deflection","ydata" : yarray.reverse(), "xdata": xarray.reverse()}
     }
     getBendingMomentEquation(beam, load) {
-        const array = []
+        const yarray = []
+        const xarray = []
         var w =load;
         var l = beam.primarySpan;
         var Ei = beam.material.properties.EI
-        for (let x = 0; x <= beam.primarySpan; x+=beam.primarySpan/10) {
+        for (let x = 0; x <= beam.primarySpan; x+=beam.primarySpan/100) {
             var v =  ((w*x/2)*(beam.primarySpan-x)*(-1))
-            array.unshift({"x" : x, "y" : v})
+            yarray.unshift(v.toFixed(2))
+            xarray.unshift(x.toFixed(2))
         }
-        return {"analys" : "bendingmoment", data : array}
+        return {"analys" : "bendingmoment", "ydata" : yarray.reverse(), "xdata": xarray.reverse()}
     }
     getShearForceEquation(beam, load) {
-        const array = []
+        const yarray = []
+        const xarray = []
         var w =load;
         var l = beam.primarySpan;
         var Ei = beam.material.properties.EI
-        for (let x = 0; x <= beam.primarySpan; x+=beam.primarySpan/10) {
+        for (let x = 0; x <= beam.primarySpan; x+=beam.primarySpan/100) {
             var v =  w*(beam.primarySpan/2-x)
-            array.unshift({"x" : x, "y" : v})
+            yarray.unshift(v.toFixed(2))
+            xarray.unshift(x.toFixed(2))
         }
-        return {"analys" : "shearforce", data : array}
+        return {"analys" : "shearforce", "ydata" : yarray.reverse(), "xdata": xarray.reverse()}
     }
 };
 
@@ -172,33 +178,33 @@ BeamAnalysis.analyzer.twoSpanUnequal = class {
         var lk = 0;
         function calculateValue(x, l, l1, r1, w, mn, r3) {
             if (x === 0) {
-                m = x + l / 10;
-                lk = (x + l / 10) - (m + l / 10);
-                return x + l / 10;
+                m = x + l / 100;
+                lk = (x + l / 100) - (m + l / 100);
+                return x + l / 100;
             }
-            else if (Math.abs(x - l1) <= l / 10 && x - l1 < 0) {
+            else if (Math.abs(x - l1) <= l / 100 && x - l1 < 0) {
                 lk = x
                 return l1;
             }
-            else if (x < l1 && x !== r1 / w && mn !== r1 / w && Math.abs(x - r1 / w) <= l / 10) {
+            else if (x < l1 && x !== r1 / w && mn !== r1 / w && Math.abs(x - r1 / w) <= l / 100) {
                 lk = x
                 return r1 / w;
             }
-            else if (Math.abs(x - l) < l / 10) {
+            else if (Math.abs(x - l) < l / 100) {
                 return l;
             }
-            else if ( x > l1 && x !== l - r3 / w && mn !== l - r3 / w && Math.abs(x - (l - r3 / w)) < l / 10) {
+            else if ( x > l1 && x !== l - r3 / w && mn !== l - r3 / w && Math.abs(x - (l - r3 / w)) < l / 100) {
                 lk = x
                 return l - r3 / w;
             }
             else if (x === r1 / w || x === l - r3 / w) {
                 lk = x
-                return mn + l / 10;
+                return mn + l / 100;
             }
             else {
-                lk = (x + l / 10) - (m + l / 10);
-                m = x + l / 10;
-                return x + l / 10;
+                lk = (x + l / 100) - (m + l / 100);
+                m = x + l / 100;
+                return x + l / 100;
             }
         }
         function calculatePoint1(x, Ei, r1, w, l1, j) {
@@ -221,7 +227,8 @@ BeamAnalysis.analyzer.twoSpanUnequal = class {
         
             return (((term1 + term2 - term3 - term4) / denominator) * 1000 * j);
         }
-        var array = []
+        var xarray = []
+        var yarray = []
         let i = 0
         for(m = 0; m <= l; m = calculateValue(m, l, l1, r1, w, lk, r3), i++){
             if (i <= 11) {
@@ -231,13 +238,14 @@ BeamAnalysis.analyzer.twoSpanUnequal = class {
             }
             
             var x = m
-            array.unshift({"x" : x, "y" : y})
+            xarray.unshift(x.toFixed(2))
+            yarray.unshift(y.toFixed(2))
             if (m == l) {
                 break
             }
         }
-        const reversearray = array.reverse()
-        return {"analys" : "deflection", data : reversearray}
+        
+        return {"analys" : "deflection", "xdata" : xarray.reverse(), "ydata": yarray.reverse()}
     }
     getBendingMomentEquation(beam, load) {
         var w =load
@@ -252,33 +260,33 @@ BeamAnalysis.analyzer.twoSpanUnequal = class {
         var lk = 0;
         function calculateValue(x, l, l1, r1, w, mn, r3) {
             if (x === 0) {
-                m = x + l / 10;
-                lk = (x + l / 10) - (m + l / 10);
-                return x + l / 10;
+                m = x + l / 100;
+                lk = (x + l / 100) - (m + l / 100);
+                return x + l / 100;
             }
-            else if (Math.abs(x - l1) <= l / 10 && x - l1 < 0) {
+            else if (Math.abs(x - l1) <= l / 100 && x - l1 < 0) {
                 lk = x
                 return l1;
             }
-            else if (x < l1 && x !== r1 / w && mn !== r1 / w && Math.abs(x - r1 / w) <= l / 10) {
+            else if (x < l1 && x !== r1 / w && mn !== r1 / w && Math.abs(x - r1 / w) <= l / 100) {
                 lk = x
                 return r1 / w;
             }
-            else if (Math.abs(x - l) < l / 10) {
+            else if (Math.abs(x - l) < l / 100) {
                 return l;
             }
-            else if ( x > l1 && x !== l - r3 / w && mn !== l - r3 / w && Math.abs(x - (l - r3 / w)) < l / 10) {
+            else if ( x > l1 && x !== l - r3 / w && mn !== l - r3 / w && Math.abs(x - (l - r3 / w)) < l / 100) {
                 lk = x
                 return l - r3 / w;
             }
             else if (x === r1 / w || x === l - r3 / w) {
                 lk = x
-                return mn + l / 10;
+                return mn + l / 100;
             }
             else {
-                lk = (x + l / 10) - (m + l / 10);
-                m = x + l / 10;
-                return x + l / 10;
+                lk = (x + l / 100) - (m + l / 100);
+                m = x + l / 100;
+                return x + l / 100;
             }
         }
         function calculateRoundedValue(x, l, l1, r1, w, r2) {
@@ -304,17 +312,18 @@ BeamAnalysis.analyzer.twoSpanUnequal = class {
                 ).toFixed(2);
             }
         }
-        var array = []
+        var xarray = []
+        var yarray = []
         for(m = 0; m <= l; m = calculateValue(m, l, l1, r1, w, lk, r3)){
             var y = calculateRoundedValue(m,l,l1,r1,w,r2)
             var x = m
-            array.unshift({"x" : x, "y" : y})
+            xarray.unshift(x.toFixed(2))
+            yarray.unshift(y.toFixed(2))
             if (m == l) {
                 break
             }
         }
-        const reversearray = array.reverse()
-        return {"analys" : "bendingmoment", data : reversearray}
+        return {"analys" : "bendingmoment", "xdata" : xarray.reverse(), "ydata": yarray.reverse()}
     }
     getShearForceEquation(beam, load) {
         var w =load
@@ -329,21 +338,21 @@ BeamAnalysis.analyzer.twoSpanUnequal = class {
         var mn = 0;
         function calculateValue(x, m, l1, l) {
             if (x == 0) {
-                m = x + l / 10;
-                mn = (x + l / 10) - (m + l / 10);
-                return x + l / 10;
-            } else if (Math.abs(x - l1) <= l / 10 && x - l1 < 0) {
+                m = x + l / 100;
+                mn = (x + l / 100) - (m + l / 100);
+                return x + l / 100;
+            } else if (Math.abs(x - l1) <= l / 100 && x - l1 < 0) {
                 mn = x
                 return l1;
-            } else if (x - l1 == 0 && Math.abs(m - l1) <= l / 10 && m !== x) {
+            } else if (x - l1 == 0 && Math.abs(m - l1) <= l / 100 && m !== x) {
                 mn = x
                 return l1;
-            } else if (Math.abs(x - l) < l / 10) {
+            } else if (Math.abs(x - l) < l / 100) {
                 return l;
             }else{
-                mn = (x + l / 10) - (m + l / 10);
-                m = x + l / 10;
-                return x + l / 10;
+                mn = (x + l / 100) - (m + l / 100);
+                m = x + l / 100;
+                return x + l / 100;
             }
         }
         function calculate(x, m, mn, r1, r2, w, l, l1) {
@@ -362,18 +371,19 @@ BeamAnalysis.analyzer.twoSpanUnequal = class {
             }
         }
 
-        var array = []
+        var xarray = []
+        var yarray = []
         
         for(m = 0; m <= l; m = calculateValue(m, mn, l1, l)) {
             var y =  calculate(m, mn, m,  r1, r2, w, l, l1)
             var x = m
-            array.unshift({"x" : x, "y" : y})
+            xarray.unshift(x.toFixed(2))
+            yarray.unshift(y.toFixed(2))
             if (m == l) {
                 break
             }
             
         }
-        const reversearray = array.reverse()
-        return {"analys" : "shearforce", data :reversearray}
+        return {"analys" : "shearforce", "xdata":xarray.reverse(), "ydata" : yarray.reverse()}
     }
 };
